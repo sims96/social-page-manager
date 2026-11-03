@@ -1,0 +1,21 @@
+name = "fb-page-manager-2"
+main = "src/index.js"
+compatibility_date = "2024-12-09"
+
+[vars]
+FACEBOOK_API_VERSION = "v23.0"
+
+# Secrets (set via `wrangler secret put <NAME>`):
+# - FACEBOOK_APP_ID
+# - FACEBOOK_APP_SECRET
+# - PAGE_ACCESS_TOKEN
+# - PAGE_ID
+# - SESSION_SECRET
+
+[site]
+bucket = "./public"
+
+# KV for session storage (separate namespace for this instance)
+[[kv_namespaces]]
+binding = "SESSIONS"
+id = "e9d8fd7a6ac647798a69062571af4e64"

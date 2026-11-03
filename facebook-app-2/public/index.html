@@ -1,0 +1,308 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+  <title>Page Manager</title>
+  <meta name="theme-color" content="#ffffff" media="(prefers-color-scheme: light)">
+  <meta name="theme-color" content="#111315" media="(prefers-color-scheme: dark)">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="default">
+  <meta name="apple-mobile-web-app-title" content="Page Manager">
+  <link rel="manifest" href="/manifest.json">
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+  <link rel="stylesheet" href="/css/style.css">
+</head>
+<body>
+  <div class="app">
+    <!-- Top bar -->
+    <header class="topbar">
+      <h1 class="topbar-title" id="viewTitle">Home</h1>
+      <div class="topbar-actions">
+        <button type="button" class="icon-btn" id="refreshBtn" aria-label="Refresh">
+          <i class="fas fa-rotate-right"></i>
+        </button>
+        <button type="button" class="icon-btn" data-nav="settings" aria-label="Settings">
+          <i class="fas fa-gear"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Navigation: bottom tab bar on phones, side rail on desktop -->
+    <nav class="tabbar" aria-label="Main">
+      <div class="rail-brand">
+        <span class="app-mark"><i class="fab fa-facebook-f"></i></span>
+        <span>Page Manager</span>
+      </div>
+      <a href="#home" class="tab" data-nav="home"><i class="fas fa-house"></i><span>Home</span></a>
+      <a href="#posts" class="tab" data-nav="posts"><i class="fas fa-table-list"></i><span>Posts</span></a>
+      <a href="#compose" class="tab tab-create" data-nav="compose" aria-label="Create post"><i class="fas fa-plus"></i><span>Create</span></a>
+      <a href="#comments" class="tab" data-nav="comments"><i class="fas fa-comment"></i><span>Comments</span></a>
+      <a href="#insights" class="tab" data-nav="insights"><i class="fas fa-chart-simple"></i><span>Insights</span></a>
+      <a href="#settings" class="tab tab-settings" data-nav="settings"><i class="fas fa-gear"></i><span>Settings</span></a>
+    </nav>
+
+    <main class="content" id="content">
+
+      <!-- HOME -->
+      <section class="view" id="view-home" data-title="Home">
+        <div class="page-card" id="pageCard"></div>
+
+        <div class="section-head">
+          <h2>Last 28 days</h2>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi"><span class="kpi-label">Followers</span><span class="kpi-value" id="homeFollowers">–</span></div>
+          <div class="kpi"><span class="kpi-label">Views</span><span class="kpi-value" id="homeViews">–</span></div>
+          <div class="kpi"><span class="kpi-label">Unique viewers</span><span class="kpi-value" id="homeReach">–</span></div>
+          <div class="kpi"><span class="kpi-label">Engagements</span><span class="kpi-value" id="homeEngagements">–</span></div>
+        </div>
+
+        <div class="quick-actions">
+          <button type="button" class="quick-action" data-nav="compose">
+            <i class="fas fa-pen"></i><span>New post</span>
+          </button>
+          <button type="button" class="quick-action" data-action="new-story" data-feature="stories">
+            <i class="fas fa-circle-plus"></i><span>New story</span>
+          </button>
+          <button type="button" class="quick-action" data-nav="comments">
+            <i class="fas fa-reply"></i><span>Comments</span>
+          </button>
+        </div>
+
+        <div class="section-head">
+          <h2>Recent posts</h2>
+          <button type="button" class="text-btn" data-nav="posts">See all</button>
+        </div>
+        <div class="card list" id="recentPosts"></div>
+      </section>
+
+      <!-- POSTS -->
+      <section class="view" id="view-posts" data-title="Posts">
+        <div class="segmented" id="postsSegment" data-feature="stories">
+          <button type="button" class="seg active" data-seg="feed">Posts</button>
+          <button type="button" class="seg" data-seg="stories">Stories</button>
+        </div>
+
+        <div id="postsFeedPane">
+          <div class="feed" id="postsList"></div>
+        </div>
+
+        <div id="postsStoriesPane" hidden>
+          <div class="kpi-grid kpi-grid-3">
+            <div class="kpi"><span class="kpi-label">Views</span><span class="kpi-value" id="storiesTotalViews">–</span></div>
+            <div class="kpi"><span class="kpi-label">Active</span><span class="kpi-value" id="storiesActive">–</span></div>
+            <div class="kpi"><span class="kpi-label">Avg. views</span><span class="kpi-value" id="storiesAvgViews">–</span></div>
+          </div>
+          <div class="story-grid" id="storiesList"></div>
+        </div>
+      </section>
+
+      <!-- COMPOSE -->
+      <section class="view" id="view-compose" data-title="New post">
+        <form id="composeForm" class="compose" novalidate>
+          <div class="segmented" id="composeType">
+            <button type="button" class="seg active" data-type="text"><i class="fas fa-align-left"></i> Text</button>
+            <button type="button" class="seg" data-type="photo"><i class="fas fa-image"></i> Photo</button>
+            <button type="button" class="seg" data-type="video"><i class="fas fa-video"></i> Video</button>
+            <button type="button" class="seg" data-type="link"><i class="fas fa-link"></i> Link</button>
+          </div>
+
+          <div class="card compose-card">
+            <textarea id="postMessage" rows="5" placeholder="What do you want to share?"></textarea>
+            <div class="compose-meta"><span id="charCount">0</span> characters</div>
+          </div>
+
+          <!-- Photo -->
+          <div class="media-field" id="photoField" hidden>
+            <div id="photoFileSection">
+              <label class="picker" for="photoFile">
+                <i class="fas fa-images"></i>
+                <span class="picker-title" id="photoPickerTitle">Add photos</span>
+                <span class="picker-hint" id="photoPickerHint">JPG or PNG</span>
+              </label>
+              <input type="file" id="photoFile" accept="image/*" class="visually-hidden">
+              <div class="photo-grid" id="photoPreview"></div>
+            </div>
+            <div id="photoUrlSection" hidden>
+              <label class="field-label" for="photoUrl">Image URL</label>
+              <input type="url" id="photoUrl" class="input" placeholder="https://example.com/image.jpg">
+            </div>
+            <button type="button" class="text-btn small" data-mode-toggle="photo">Use an image URL instead</button>
+          </div>
+
+          <!-- Video -->
+          <div class="media-field" id="videoField" hidden>
+            <div id="videoFileSection">
+              <label class="picker" for="videoFile">
+                <i class="fas fa-film"></i>
+                <span class="picker-title">Add a video</span>
+                <span class="picker-hint">MP4, MOV or AVI · up to 1 GB</span>
+              </label>
+              <input type="file" id="videoFile" accept="video/*" class="visually-hidden">
+              <div id="videoPreview"></div>
+            </div>
+            <div id="videoUrlSection" hidden>
+              <label class="field-label" for="videoUrl">Video URL</label>
+              <input type="url" id="videoUrl" class="input" placeholder="https://example.com/video.mp4">
+            </div>
+            <button type="button" class="text-btn small" data-mode-toggle="video">Use a video URL instead</button>
+            <label class="field-label" for="videoTitle">Title <span class="optional">optional</span></label>
+            <input type="text" id="videoTitle" class="input" placeholder="Give your video a title">
+          </div>
+
+          <!-- Link -->
+          <div class="media-field" id="linkField" hidden>
+            <label class="field-label" for="linkUrl">Link</label>
+            <input type="url" id="linkUrl" class="input" placeholder="https://example.com">
+          </div>
+
+          <div class="compose-actions">
+            <button type="button" class="btn btn-ghost" id="clearComposeBtn">Clear</button>
+            <button type="submit" class="btn btn-primary btn-wide" id="publishBtn">Publish</button>
+          </div>
+        </form>
+      </section>
+
+      <!-- COMMENTS -->
+      <section class="view" id="view-comments" data-title="Comments">
+        <div class="chips" id="commentFilter">
+          <button type="button" class="chip active" data-filter="all">All</button>
+          <button type="button" class="chip" data-filter="unanswered">Unanswered</button>
+          <button type="button" class="chip" data-filter="hidden">Hidden</button>
+        </div>
+        <div class="comment-list" id="commentsList"></div>
+      </section>
+
+      <!-- INSIGHTS -->
+      <section class="view" id="view-insights" data-title="Insights">
+        <div class="section-head">
+          <h2>Last 28 days</h2>
+        </div>
+        <div class="kpi-grid">
+          <div class="kpi"><span class="kpi-label">Followers</span><span class="kpi-value" id="analyticsFollowers">–</span></div>
+          <div class="kpi"><span class="kpi-label">Views</span><span class="kpi-value" id="analyticsViews">–</span></div>
+          <div class="kpi"><span class="kpi-label">Unique viewers</span><span class="kpi-value" id="analyticsReach">–</span></div>
+          <div class="kpi"><span class="kpi-label">Engagements</span><span class="kpi-value" id="analyticsEngagement">–</span></div>
+        </div>
+
+        <div class="section-head">
+          <h2>Trend</h2>
+          <div class="chips chips-small" id="analyticsPeriod">
+            <button type="button" class="chip" data-days="7">7d</button>
+            <button type="button" class="chip" data-days="14">14d</button>
+            <button type="button" class="chip active" data-days="28">28d</button>
+          </div>
+        </div>
+        <div class="card chart-card" id="growthChart"></div>
+
+        <div class="section-head"><h2>Top posts</h2></div>
+        <div class="card list" id="topPostsList"></div>
+
+        <div class="section-head"><h2>Videos &amp; reels</h2></div>
+        <div class="card list" id="videosList"></div>
+
+        <div class="section-head"><h2>Earnings</h2></div>
+        <div class="card" id="earningsContainer"></div>
+      </section>
+
+      <!-- SETTINGS -->
+      <section class="view" id="view-settings" data-title="Settings">
+        <div class="group-label">Facebook Page</div>
+        <div class="card group" id="connectionStatus"></div>
+
+        <div id="pageSelectionSection" hidden>
+          <div class="group-label">Choose a page</div>
+          <div class="card group" id="pagesList"></div>
+        </div>
+
+        <div id="aiReplySection" data-feature="aiReply">
+          <div class="group-label">AI replies</div>
+          <div class="card group">
+            <div class="row">
+              <div class="row-main">
+                <span class="row-title">Suggest AI replies</span>
+                <span class="row-sub">Shows an AI reply button on longer comments</span>
+              </div>
+              <label class="switch">
+                <input type="checkbox" id="aiEnabled" aria-label="Suggest AI replies">
+                <span class="switch-track"></span>
+              </label>
+            </div>
+          </div>
+
+          <div class="card form-card">
+            <label class="field-label" for="aiPageDescription">About your page</label>
+            <textarea id="aiPageDescription" class="input" rows="2" placeholder="e.g. Travel creator sharing budget trips and tips"></textarea>
+
+            <div class="field-row">
+              <div>
+                <label class="field-label" for="aiPageNiche">Niche</label>
+                <select id="aiPageNiche" class="input">
+                  <option value="General">General</option>
+                  <option value="Travel & Lifestyle">Travel &amp; Lifestyle</option>
+                  <option value="Beauty & Fashion">Beauty &amp; Fashion</option>
+                  <option value="Food & Cooking">Food &amp; Cooking</option>
+                  <option value="Tech & Gaming">Tech &amp; Gaming</option>
+                  <option value="Business & Finance">Business &amp; Finance</option>
+                  <option value="Health & Fitness">Health &amp; Fitness</option>
+                  <option value="Entertainment">Entertainment</option>
+                  <option value="Education">Education</option>
+                  <option value="Art & Photography">Art &amp; Photography</option>
+                </select>
+              </div>
+              <div>
+                <label class="field-label" for="aiPageTone">Tone</label>
+                <select id="aiPageTone" class="input">
+                  <option value="Friendly and casual">Friendly &amp; casual</option>
+                  <option value="Professional but warm">Professional &amp; warm</option>
+                  <option value="Enthusiastic and energetic">Enthusiastic</option>
+                  <option value="Calm and thoughtful">Calm &amp; thoughtful</option>
+                  <option value="Playful and fun">Playful</option>
+                  <option value="Lyza">Lyza</option>
+                </select>
+              </div>
+            </div>
+
+            <label class="field-label" for="aiCustomInstructions">Extra instructions <span class="optional">optional</span></label>
+            <textarea id="aiCustomInstructions" class="input" rows="3" placeholder="e.g. Always thank people, mention our website when relevant"></textarea>
+
+            <div class="field-row">
+              <div>
+                <label class="field-label" for="aiReplyProbability">Suggest on <span id="probabilityValue">30%</span> of comments</label>
+                <input type="range" id="aiReplyProbability" min="10" max="100" value="30">
+              </div>
+              <div>
+                <label class="field-label" for="aiMinCommentLength">Min. comment length</label>
+                <input type="number" id="aiMinCommentLength" class="input" value="20" min="5" max="200">
+              </div>
+            </div>
+
+            <button type="button" class="btn btn-primary btn-block" id="saveAIConfigBtn">Save AI settings</button>
+          </div>
+        </div>
+
+        <div class="group-label">About</div>
+        <div class="card group">
+          <div class="row">
+            <div class="row-main"><span class="row-title">Page Manager</span><span class="row-sub">Version 2.0</span></div>
+          </div>
+          <a class="row row-link" href="/privacy.html">
+            <div class="row-main"><span class="row-title">Privacy policy</span></div>
+            <i class="fas fa-chevron-right row-chevron"></i>
+          </a>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <!-- Bottom sheets are created on demand by openSheet() in app.js -->
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="/js/config.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>
